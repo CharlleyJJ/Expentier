@@ -12,14 +12,14 @@ function Nav() {
             {/*User Photo*/}
         <img 
         className="w-full object-cover" 
-        src="https://lh3.googleusercontent.com/a/AAcHTteO5nr30IQrqppHOd2C7Y9RB2S5vg2028ibX9P0eA=s83-c-mo" 
+        src="https://charlleyjj-portfolio-2023.vercel.app/assets/Cjj_About-6acaf09f.jpeg" 
         alt="Profile Image"/>
         </div>
          {/*User Name*/}
         <small>Hi Charlley JJ</small>
       </div>
          {/*Icon and Button*/}
-      <nav className="flex items-center gap-2">
+      <nav className="flex items-center gap-4">
         <div>
           <ImStatsBars className='text-2xl'/>
         </div>

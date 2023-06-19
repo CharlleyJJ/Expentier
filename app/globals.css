@@ -5,19 +5,19 @@
 
 @layer baseW {
   body{
-    @apply bg-gradient-to-tl w-screen h-screen from-gray-200 via-gray-400 to-gray-600 text-orange-500;
+    @apply bg-gradient-to-tl object-fill w-[100vw] h-[100vh] from-gray-200 via-gray-400 to-gray-600 text-orange-500 relative overflow-hidden;
   }
   button{
-    @apply transition-all duration-100 hover:scale-110;
+    @apply hover:transition-all duration-100 hover:scale-110;
   }
 }
 
 @layer baseD {
   body{
-    @apply bg-gradient-to-tr w-screen h-screen from-gray-700 via-gray-900 to-black text-white;
+    @apply  bg-gradient-to-tr object-fill w-[100vw] h-[100vh] from-gray-700 via-gray-900 to-black text-white relative overflow-hidden;
   }
   button{
-    @apply transition-all duration-100 hover:scale-110;
+    @apply hover:transition-all duration-100 hover:scale-110;
   }
 }
 
@@ -36,6 +36,10 @@
 
   .btn-danger{
     @apply px-4 py-2 capitalize rounded-xl border border-red-500 bg-gradient-to-bl from-red-300 to-red-700 text-white hover:bg-gradient-to-br  duration-100 transition ease-in-out hover:scale-110
+  }
+
+  .glass {
+    @apply bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-[8px] bg-opacity-30
   }
   
 }
