@@ -1,10 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import ExpensesCategoryItem from "@/components/ExpensesCategoryItem";
-import { currencyFormatter } from "@/lib/utils";
-import { IoClose } from "react-icons/io5"
+import Modal from "@/components/Modal";
+import { currencyFormatter, dataFormatter } from "@/lib/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+
+// Firebase
+
+import {db} from '@/lib/firebase'
+import {collection, addDoc, getDocs} from 'firebase/firestore';
+import { data } from "autoprefixer";
 
 
 
@@ -42,27 +48,122 @@ const DUMMY_DATA = [
 
 export default function Home() {
 {
-  const [modalIsOpen, setModalIsOpen] = useState(true);
 
+  const [income,setIncome] = useState([]);
+  console.log(income);
+  const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
+
+  const unitRef = useRef();
+  const quantityRef = useRef();
+  const amountRef = useRef();
+  const databRef = useRef();
+  const fontRef = useRef();
+  const methodRef = useRef();
+
+  // Handler Functions
+  const addIncomeHandler = async (e) => {
+    e.preventDefault();
+    const newIncome = {
+      units: unitRef.current.value,
+      quantity: quantityRef.current.value,
+      amount: amountRef.current.value,
+      datab: databRef.current.value,
+      font: fontRef.current.value,
+      method: methodRef.current.value,
+      createdAt: new Date(),
+    };
+    //console.log(newIncome);
+
+    const collectionRef = collection(db,"income")
+    try {
+      const docSnap = await addDoc(collectionRef,newIncome);
+    } catch (error) {
+      console.log(error.message);
+    }
+    
+  };
+
+  useEffect(() => {
+    const getIncomeData = async () => {
+      const collectionRef = collection(db, "income");
+      const docsSnap = await getDocs(collectionRef);
+      
+      const data = docsSnap.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt && new Date(doc.data().createdAt.toMillis()),
+        };
+      });
+      setIncome(data);
+    };
+    getIncomeData();
+  }, [])
 
   return (
   <>
   {/*Modal*/}
-  {modalIsOpen && (
-    <div className="absolute top-0 left-0 w-full h-full z-10">
-      <div className="container mx-auto mt-5 max-w-2xl h-[100vh] rounded-3xl glass px-4 py-6">
-        <button 
-        onClick={() =>{
-          setModalIsOpen(false);
-        }} 
-        className="w-11 h-11 mb-4 font-bold rounded-full hover:bg-transparent hover:transition hover:duration-100 hover:scale-110  hover:border hover:border-white ">
-         <IoClose className="w-10 h-10 mb-4 font-bold "/>
-        </button>
-        <h3>Hello Modal</h3>
+   <Modal show={showAddIncomeModal} onClose={setShowAddIncomeModal}>
+    <section>
+      <div className="flex flex-col gap-4">
+        <h2 className="px-4 py-2 text-2xl font-bold">Add Income</h2>
       </div>
-    </div>
+        <form onSubmit={addIncomeHandler} className="flex flex-col gap-4">
+          {/*Unit*/}
+          <div className="input-group pb-3">
+            <label htmlFor="units">Unit</label>
+              <select required name="units" id="units" ref={unitRef} defaultValue="BRL" >
+                <option value="BRL">BRL</option>
+                <option value="USD">USD</option>
+              </select>
+          </div>
+          {/*Quantity*/}
+          <div className="input-group pb-2">
+            <label htmlFor="quantity">Income Quantity</label>
+            <input type="number" min={0.01} step={0.01} ref={quantityRef} placeholder="Enter Income Quantity"/>
+          </div>
+          {/*Amount*/}
+          <div className="input-group pb-2">
+            <label htmlFor="amount">Income Amount</label>
+            <input required type="number" name="amount" ref={amountRef} min={0.01} step={0.01} placeholder="Enter income amount"/>
+          </div>
+          {/*Data*/}
+          <div className="input-group pb-2">
+            <label  htmlFor="datab">Income Data</label>
+            <input required type="datetime-local" id="datab" name="datab" ref={databRef} placeholder="Enter income data"/>
+          </div>
+          {/*Font*/}
+          <div className="input-group pb-1">
+            <label htmlFor="font">Income Font</label>
+            <input required type="text" name="font" ref={fontRef} placeholder="Enter income font"/>
+          </div>
+          {/*Method*/}
+          <div className="input-group pb-1">
+            <label htmlFor="method">Income Method</label>
+            <input type="text" name="method" ref={methodRef} placeholder="Enter income method"/>
+          </div>
 
-  )}
+          <button type="submit" className="btn btn-primary-add" > Add Income</button>
+        </form>
+          <div>
+            <h3 className="text-2xl font-bold py-2">      Income History      </h3>
+            {income.map(i => {
+              return(
+                <div key={i.id}>
+                  <div>
+                    <p className="font-semibold">{i.font}</p>
+                    <small>{dataFormatter(i.datab)}</small>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        
+    </section>
+    
+   </Modal>
+    
+
     <main className="container max-w-2xl px-6 mx-auto overflow-hidden">
       {/*wrapper*/}
       <section className="py-3">
@@ -72,10 +173,10 @@ export default function Home() {
       </section>
       {/*Buttons that changes*/}
       <section className="flex gap-2 items-center py-3">
+        <button  className="btn btn-primary"> + Expenses</button>
         <button onClick={() =>{
-          setModalIsOpen(true);
-        }} className="btn btn-primary"> + Expenses</button>
-        <button className="btn btn-primary-outline"> + Income</button>
+          setShowAddIncomeModal(true);
+        }} className="btn btn-primary-outline"> + Income</button>
       </section>
 
       {/*Expenses*/}
@@ -86,6 +187,7 @@ export default function Home() {
           {DUMMY_DATA.map((expense) => {
             return (
               <ExpensesCategoryItem
+              key={expense.id}
                 color={expense.color}
                 title={expense.title}
                 total={expense.total}
@@ -109,7 +211,7 @@ export default function Home() {
                   label:"Expenses",
                   data: DUMMY_DATA.map(expense => expense.total),
                   backgroundColor: DUMMY_DATA.map(expense => expense.color),
-                  borderColor: ['#aaaaaa'],
+                  borderColor: ['#1b2333'],
                   borderWidth:5,
                 }
               ],
