@@ -5,7 +5,7 @@ function Modal({show, onClose, children}) {
         <div style={{
             transform: show ? "translateX(0%)" : "translateX(-200%)",
           }} className="absolute top-0 left-0 w-full h-full z-10 transition-all duration-500">
-            <div className="container mx-auto mt-5 max-w-2xl h-[110vh] rounded-3xl glass px-4 py-6">
+            <div className="container mx-auto mt-5 max-w-2xl h-auto rounded-3xl glass px-4 py-6">
               <button 
               onClick={() =>{
                 onClose(false);

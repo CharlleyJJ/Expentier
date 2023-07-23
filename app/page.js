@@ -144,7 +144,6 @@ export default function Home() {
           </div>
 
           <button type="submit" className="btn btn-primary-add" > Add Income</button>
-        </form>
           <div>
             <h3 className="text-2xl font-bold py-2">      Income History      </h3>
             {income.map(i => {
@@ -158,6 +157,8 @@ export default function Home() {
               )
             })}
           </div>
+        </form>
+          
         
     </section>
     
