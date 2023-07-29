@@ -20,7 +20,7 @@ function AddIncomeModal ({show, onClose}) {
   const databRef = useRef();
   const fontRef = useRef();
   const methodRef = useRef();
-  const {values: {income}} = useContext(financeContext);
+  const {values: {income,addIncomeItem, removeIncomeItem}} = useContext(financeContext);
   console.log(income);
 
     // Handler Functions
@@ -37,6 +37,12 @@ function AddIncomeModal ({show, onClose}) {
     };
     //console.log(newIncome);
 
+    try {
+        await addIncomeItem(newIncome);
+      } catch (error) {
+        console.error(error);
+      }
+      
     amountRef.current.value = "";
     unitRef.current.value = "";
     quantityRef.current.value = "";
@@ -45,8 +51,14 @@ function AddIncomeModal ({show, onClose}) {
     methodRef.current.value = "";
   };
 
-  const deleteIncomeEntryHandler = async (incomeId) => {};
 
+  const deleteIncomeEntryHandler = async (incomeId) => {
+    try {
+      await removeIncomeItem(incomeId);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
 
 
