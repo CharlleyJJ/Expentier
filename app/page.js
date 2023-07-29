@@ -1,16 +1,11 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState} from "react";
 import ExpensesCategoryItem from "@/components/ExpensesCategoryItem";
-import Modal from "@/components/Modal";
-import { currencyFormatter, dataFormatter } from "@/lib/utils";
+import { currencyFormatter} from "@/lib/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import AddIncomeModal from "@/components/modals/AddIncomeModal"
 
-// Firebase
-
-import {db} from '@/lib/firebase'
-import {collection, addDoc, getDocs} from 'firebase/firestore';
-import { data } from "autoprefixer";
 
 
 
@@ -53,117 +48,12 @@ export default function Home() {
   console.log(income);
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
 
-  const unitRef = useRef();
-  const quantityRef = useRef();
-  const amountRef = useRef();
-  const databRef = useRef();
-  const fontRef = useRef();
-  const methodRef = useRef();
 
-  // Handler Functions
-  const addIncomeHandler = async (e) => {
-    e.preventDefault();
-    const newIncome = {
-      units: unitRef.current.value,
-      quantity: quantityRef.current.value,
-      amount: amountRef.current.value,
-      datab: databRef.current.value,
-      font: fontRef.current.value,
-      method: methodRef.current.value,
-      createdAt: new Date(),
-    };
-    //console.log(newIncome);
-
-    const collectionRef = collection(db,"income")
-    try {
-      const docSnap = await addDoc(collectionRef,newIncome);
-    } catch (error) {
-      console.log(error.message);
-    }
-    
-  };
-
-  useEffect(() => {
-    const getIncomeData = async () => {
-      const collectionRef = collection(db, "income");
-      const docsSnap = await getDocs(collectionRef);
-      
-      const data = docsSnap.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data().createdAt && new Date(doc.data().createdAt.toMillis()),
-        };
-      });
-      setIncome(data);
-    };
-    getIncomeData();
-  }, [])
 
   return (
   <>
   {/*Modal*/}
-   <Modal show={showAddIncomeModal} onClose={setShowAddIncomeModal}>
-    <section>
-      <div className="flex flex-col gap-4">
-        <h2 className="px-4 py-2 text-2xl font-bold">Add Income</h2>
-      </div>
-        <form onSubmit={addIncomeHandler} className="flex flex-col gap-4">
-          {/*Unit*/}
-          <div className="input-group pb-3">
-            <label htmlFor="units">Unit</label>
-              <select required name="units" id="units" ref={unitRef} defaultValue="BRL" >
-                <option value="BRL">BRL</option>
-                <option value="USD">USD</option>
-              </select>
-          </div>
-          {/*Quantity*/}
-          <div className="input-group pb-2">
-            <label htmlFor="quantity">Income Quantity</label>
-            <input type="number" min={0.01} step={0.01} ref={quantityRef} placeholder="Enter Income Quantity"/>
-          </div>
-          {/*Amount*/}
-          <div className="input-group pb-2">
-            <label htmlFor="amount">Income Amount</label>
-            <input required type="number" name="amount" ref={amountRef} min={0.01} step={0.01} placeholder="Enter income amount"/>
-          </div>
-          {/*Data*/}
-          <div className="input-group pb-2">
-            <label  htmlFor="datab">Income Data</label>
-            <input required type="datetime-local" id="datab" name="datab" ref={databRef} placeholder="Enter income data"/>
-          </div>
-          {/*Font*/}
-          <div className="input-group pb-1">
-            <label htmlFor="font">Income Font</label>
-            <input required type="text" name="font" ref={fontRef} placeholder="Enter income font"/>
-          </div>
-          {/*Method*/}
-          <div className="input-group pb-1">
-            <label htmlFor="method">Income Method</label>
-            <input type="text" name="method" ref={methodRef} placeholder="Enter income method"/>
-          </div>
-
-          <button type="submit" className="btn btn-primary-add" > Add Income</button>
-          <div>
-            <h3 className="text-2xl font-bold py-2">      Income History      </h3>
-            {income.map(i => {
-              return(
-                <div key={i.id}>
-                  <div>
-                    <p className="font-semibold">{i.font}</p>
-                    <small>{dataFormatter(i.datab)}</small>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </form>
-          
-        
-    </section>
-    
-   </Modal>
-    
+  <AddIncomeModal show={showAddIncomeModal} onClose={setShowAddIncomeModal}/>
 
     <main className="container max-w-2xl px-6 mx-auto overflow-hidden">
       {/*wrapper*/}
