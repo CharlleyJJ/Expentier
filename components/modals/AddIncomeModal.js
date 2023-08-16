@@ -29,7 +29,7 @@ function AddIncomeModal ({show, onClose}) {
     const newIncome = {
       units: unitRef.current.value,
       quantity: quantityRef.current.value,
-      amount: amountRef.current.value,
+      amount: +amountRef.current.value,
       datab: databRef.current.value,
       font: fontRef.current.value,
       method: methodRef.current.value,
