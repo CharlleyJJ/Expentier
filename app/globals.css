@@ -14,7 +14,7 @@
 
 @layer baseD {
   body{
-    @apply  bg-gradient-to-tr object-fill object-cover w-[100vw] h-[140vh] from-gray-700 via-gray-900 to-black text-white relative overflow-x-hidden;
+    @apply  bg-gradient-to-tr object-fill object-cover w-[100vw] from-gray-700 via-gray-900 to-black text-white relative overflow-x-hidden;
   }
   button{
     @apply hover:transition-all duration-100 hover:scale-110;
