@@ -2,6 +2,9 @@
 import { useState, useContext, useEffect} from "react";
 
 import { financeContext } from "@/lib/store/finance-context";
+import { authContext } from "@/lib/store/auth-context";
+
+
 
 import ExpensesCategoryItem from "@/components/ExpensesCategoryItem";
 import { currencyFormatter} from "@/lib/utils";
@@ -9,6 +12,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import AddIncomeModal from "@/components/modals/AddIncomeModal"
 import AddExpensesModal from "@/components/modals/AddExpensesModal";
+import SignIn from "@/components/SignIn.js";
 
 
 
@@ -24,11 +28,18 @@ export default function Home() {
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
   const {values} = useContext(financeContext);
+  const{user} = useContext(authContext);
+
+
+  
 
   const [balance, setBalance] = useState(0);
 
   const {expenses} = values;
   const {income} = values;
+
+
+  
 
   const totalExpenses = expenses.reduce((total, expense) => total + expense.total, 0);
   const expensePercentages = expenses.map(expense => ((expense.total / totalExpenses) * 100).toFixed(2));
@@ -46,6 +57,12 @@ export default function Home() {
   
     setBalance(newBalance);
   }, [expenses, income]);
+
+if(!user){
+  return <SignIn/>;
+}
+  
+
   return (
   <>
   {/*Modal*/}
