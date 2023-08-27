@@ -1,6 +1,7 @@
 import {useRef,useContext} from 'react'
 import { currencyFormatter, dataFormatter } from '@/lib/utils';
 import Modal from "@/components/Modal.js";
+import { authContext } from '@/lib/store/auth-context';
 
 import { financeContext } from '@/lib/store/finance-context';
 
@@ -21,6 +22,8 @@ function AddIncomeModal ({show, onClose}) {
   const fontRef = useRef();
   const methodRef = useRef();
   const {values: {income,addIncomeItem, removeIncomeItem}} = useContext(financeContext);
+
+  const {user} = useContext(authContext);
   console.log(income);
 
     // Handler Functions
@@ -34,6 +37,7 @@ function AddIncomeModal ({show, onClose}) {
       font: fontRef.current.value,
       method: methodRef.current.value,
       createdAt: new Date(),
+      uid: user.uid,
     };
     //console.log(newIncome);
 
