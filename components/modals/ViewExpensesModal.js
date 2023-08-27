@@ -9,7 +9,7 @@ function ViewExpenseModal({show, onClose, expense}) {
 
     const {values} = useContext(financeContext);
 
-   const {deleteExpenseItem} = values;
+   const {deleteExpenseItem, deleteExpenseCategory} = values;
 
 
    const deleteExpenseItemHandler = async (item) => {
@@ -30,6 +30,14 @@ function ViewExpenseModal({show, onClose, expense}) {
         }
     };
 
+    const deleteExpenseHandler = async () => {
+        try {
+            await deleteExpenseCategory(expense.id);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
 
 
 
@@ -39,7 +47,7 @@ function ViewExpenseModal({show, onClose, expense}) {
     <Modal show={show} onClose={onClose}>
         <div className="flex items-center justify-between">
             <h2 className="text-4xl">{expense.title}</h2>
-            <button className="btn btn-danger">Delete</button>
+            <button onClick={deleteExpenseHandler} className="btn btn-danger">Delete</button>
 
         </div>
 
@@ -48,8 +56,10 @@ function ViewExpenseModal({show, onClose, expense}) {
             {expense.items.map((item) =>{
                 return (
                 <div key={item.id} className="flex items-center justify-between">
-                    
-                    <small>{dataFormatter(item.createdAt)}</small>
+
+                    <small>{item.createdAt.toMillis ? new Date(item.createdAt.toMillis()).toISOString():
+                    item.createdAt.toISOString()}</small>
+
                     <p className="flex items-center gap-2">
                         {currencyFormatter(item.amount)}
                         <button onClick={() => {
