@@ -30,7 +30,8 @@ export default function Home() {
   const {expenses} = values;
   const {income} = values;
 
-
+  const totalExpenses = expenses.reduce((total, expense) => total + expense.total, 0);
+  const expensePercentages = expenses.map(expense => ((expense.total / totalExpenses) * 100).toFixed(2));
 
   useEffect(()=> {
     const incomeTotal = income.reduce((total, i) => {
@@ -92,20 +93,34 @@ export default function Home() {
           Stats
           </h3>
           <div className="w-1/2 mx-auto ">
-            <Doughnut data=
-            {{
-              labels: expenses.map(expense => expense.title),
-              datasets:[
-                {
-                  label:"Expenses",
-                  data: expenses.map(expense => expense.total),
-                  backgroundColor: expenses.map(expense => expense.color),
-                  borderColor: ['#1b2333'],
-                  borderWidth:5,
-                }
-              ],
-            }}
-            />
+          <Doughnut 
+  data={{
+    labels: expenses.map(expense => expense.title),
+    datasets:[
+      {
+        label:"Expenses",
+        data: expenses.map(expense => expense.total),
+        backgroundColor: expenses.map(expense => expense.color),
+        borderColor: ['#1b2333'],
+        borderWidth:1,
+      }
+    ],
+  }}
+  options={{
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            var label = context.label;
+            var value = parseFloat(context.parsed.toFixed(2)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            var percentage = expensePercentages[context.dataIndex];
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
+    }
+  }}
+/>
           </div>
       </section>
     </main>
